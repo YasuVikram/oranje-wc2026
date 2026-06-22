@@ -7,7 +7,11 @@
 <style>
   :root{
     --bg:#F4F6FB; --card:#FFFFFF; --ink:#14203F; --muted:#737B96;
-    --line:#E5E8F2; --accent:#FF6B00; --accent-soft:#FFF1E6; --accent-line:#FF9A52;
+    --line:#E5E8F2;
+    --accent:#FF6B00;
+    --accent-soft:color-mix(in srgb, var(--accent) 12%, #fff);
+    --accent-line:color-mix(in srgb, var(--accent) 50%, #fff);
+    --accent-deep:color-mix(in srgb, var(--accent) 82%, #000);
     --green:#1FA971; --shadow:0 1px 2px rgba(20,32,63,.05),0 8px 22px rgba(20,32,63,.07);
     --indent:56px; --gap:24px; --cardw:236px;
   }
@@ -96,6 +100,8 @@
   .chatform input:focus{outline:none;border-color:var(--accent-line)}
   .chatform button{font:inherit;font-weight:700;font-size:14px;color:#fff;background:var(--accent);border:none;border-radius:11px;padding:0 16px;cursor:pointer}
   .chatform button:hover{background:var(--accent-deep,#E55300)}
+
+  .badge,.pill,.chip,.round,.team.me .nm,.selwrap select,.selwrap::after,.chatform button,.msg.user,.step .elbow,.card.final,.chat-h{transition:background-color .35s ease,border-color .35s ease,color .35s ease}
 
   @media(max-width:560px){
     :root{--indent:20px;--gap:26px;--cardw:auto}
@@ -232,6 +238,9 @@
       mk("Sun 19 Jul","21:00","MetLife, NJ","🏴󠁧󠁢󠁥󠁮󠁧󠁿","England","2.4%","vlo","Very low")]}
   };
   var ORDER=["spain","france","england","argentina","portugal","brazil","germany","netherlands","norway","belgium"];
+  // signature accent colour per team (one hue; soft/line/deep derived via color-mix)
+  var COLORS={spain:"#C8102E",france:"#1E3A8A",england:"#15317E",argentina:"#2E7DB8",portugal:"#A4133C",
+    brazil:"#009C3B",germany:"#1A1A1A",netherlands:"#FF6B00",norway:"#BA0C2F",belgium:"#D81E27"};
 
   // build dropdown
   var sel=document.getElementById("team");
@@ -240,6 +249,7 @@
 
   function render(key){
     var t=TEAMS[key];
+    document.documentElement.style.setProperty("--accent",COLORS[key]||"#FF6B00");
     document.getElementById("badge").textContent=t.flag;
     document.getElementById("subtitle").innerHTML=t.name+' · Group '+t.grp+' · Opta title odds <b style="color:var(--ink)">'+t.odds+'</b> (#'+t.rank+' of 48)';
     document.title="World Cup 2026 · "+t.name+"'s Road to the Final";
