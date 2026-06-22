@@ -9,7 +9,7 @@
     --bg:#F4F6FB; --card:#FFFFFF; --ink:#14203F; --muted:#737B96;
     --line:#E5E8F2; --orange:#FF6B00; --orange-soft:#FFF1E6; --orange-line:#FF9A52;
     --green:#1FA971; --shadow:0 1px 2px rgba(20,32,63,.05),0 8px 22px rgba(20,32,63,.07);
-    --indent:60px; --gap:30px; --cardw:248px;
+    --indent:56px; --gap:24px; --cardw:236px;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
@@ -41,26 +41,26 @@
     border-left:2.5px solid var(--orange-line);border-bottom:2.5px solid var(--orange-line);
     border-bottom-left-radius:12px}
 
-  .card{background:var(--card);border:1px solid var(--line);border-radius:15px;
-    padding:13px 15px;box-shadow:var(--shadow)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:13px;
+    padding:10px 12px;box-shadow:var(--shadow)}
   .step.last .card{border-color:var(--orange-line);background:linear-gradient(180deg,var(--orange-soft),#fff)}
 
-  .ctop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-  .round{font-size:10.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--orange)}
-  .date{font-size:19px;font-weight:800;letter-spacing:-.4px;margin-top:1px}
-  .pill{background:var(--orange-soft);color:var(--orange);font-size:11px;font-weight:800;
-    padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .ctop{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .round{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--orange)}
+  .date{font-size:15px;font-weight:800;letter-spacing:-.3px}
+  .pill{background:var(--orange-soft);color:var(--orange);font-size:10.5px;font-weight:800;
+    padding:2px 8px;border-radius:999px;white-space:nowrap}
   .pill.win{background:#E9F8F1;color:var(--green)}
 
-  .tie{margin-top:11px;display:flex;flex-direction:column;gap:6px}
-  .team{display:flex;align-items:center;gap:9px}
-  .flag{font-size:20px;width:24px;text-align:center;flex:none}
-  .nm{font-size:14.5px;font-weight:600}
+  .tie{margin-top:8px;display:flex;align-items:center;gap:7px;font-size:13px}
+  .team{display:flex;align-items:center;gap:5px;min-width:0}
+  .flag{font-size:17px;flex:none}
+  .nm{font-weight:600;white-space:nowrap}
   .team.me .nm{font-weight:800;color:var(--orange)}
-  .sep{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:1px}
-  .sep::before,.sep::after{content:"";height:1px;background:var(--line);flex:1}
-  .venue{margin-top:11px;font-size:11.5px;color:var(--muted)}
-  .trophy{font-size:18px;margin-right:4px}
+  .sep{color:var(--muted);font-size:9.5px;font-weight:700;letter-spacing:.5px;flex:none}
+  .meta{margin-top:8px;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta b{color:var(--ink);font-weight:700}
+  .trophy{font-size:16px;margin-right:3px}
 
   /* details */
   h2{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:38px 0 12px}
@@ -127,33 +127,35 @@
     <li>Live tables — <a href="https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_Group_F" target="_blank" rel="noopener">Group F</a> · <a href="https://www.cbssports.com/soccer/news/world-cup-group-standings-table-results/" target="_blank" rel="noopener">CBS Sports</a></li>
   </ul></div>
 
-  <footer>Built 22 Jun 2026 · auto-refreshes after the group stage with the confirmed Round-of-32 matchup.</footer>
+  <footer>Built 22 Jun 2026 · auto-refreshes after the group stage with the confirmed Round-of-32 matchup. Times shown in CET (converted from each stadium's local kickoff); the Round-of-32 game is a 7pm Monterrey start, i.e. 3am in the Netherlands.</footer>
 </div>
 
 <script>
   var ROUNDS=[
-    {round:"Round of 32",date:"Sun 29 Jun",venue:"Estadio BBVA, Monterrey",opp:{f:"🇲🇦",n:"Morocco"},reach:"78%",pill:"",conf:"hi",cl:"High"},
-    {round:"Round of 16",date:"Sat 4 Jul",venue:"NRG Stadium, Houston",opp:{f:"🇨🇭",n:"Switzerland"},reach:"48%",pill:"",conf:"md",cl:"Medium"},
-    {round:"Quarter-final",date:"Thu 9 Jul",venue:"Gillette Stadium, Foxborough",opp:{f:"🇫🇷",n:"France"},reach:"20%",pill:"",conf:"md",cl:"Medium"},
-    {round:"Semi-final",date:"Tue 14 Jul",venue:"AT&T Stadium, Arlington",opp:{f:"🇪🇸",n:"Spain"},reach:"8.5%",pill:"",conf:"lo",cl:"Low"},
-    {round:"FINAL",date:"Sun 19 Jul",venue:"MetLife Stadium, New Jersey",opp:{f:"🏆",n:"Best of other half"},reach:"3.8%",pill:"win",conf:"vlo",cl:"Very low",last:true}
+    {round:"Round of 32",date:"Sun 29 Jun",cet:"03:00 (Mon)",city:"Monterrey",opp:{f:"🇲🇦",n:"Morocco"},reach:"78%",pill:"",conf:"hi",cl:"High"},
+    {round:"Round of 16",date:"Sat 4 Jul",cet:"19:00",city:"Houston",opp:{f:"🇨🇭",n:"Switzerland"},reach:"48%",pill:"",conf:"md",cl:"Medium"},
+    {round:"Quarter-final",date:"Thu 9 Jul",cet:"22:00",city:"Foxborough",opp:{f:"🇫🇷",n:"France"},reach:"20%",pill:"",conf:"md",cl:"Medium"},
+    {round:"Semi-final",date:"Tue 14 Jul",cet:"21:00",city:"Arlington",opp:{f:"🇪🇸",n:"Spain"},reach:"8.5%",pill:"",conf:"lo",cl:"Low"},
+    {round:"FINAL",date:"Sun 19 Jul",cet:"21:00",city:"MetLife, NJ",opp:{f:"🏆",n:"Other half"},reach:"3.8%",pill:"win",conf:"vlo",cl:"Very low",last:true}
   ];
   document.getElementById("ladder").innerHTML=ROUNDS.map(function(r,i){
     return '<div class="step s'+i+(r.last?' last':'')+'">'+
       (i>0?'<div class="elbow"></div>':'')+
       '<div class="card">'+
-        '<div class="ctop"><div><div class="round">'+r.round+'</div><div class="date">'+r.date+'</div></div>'+
+        '<div class="ctop"><div class="round">'+r.round+'</div>'+
           '<div class="pill '+r.pill+'">'+r.reach+'</div></div>'+
+        '<div class="date">'+r.date+'</div>'+
         '<div class="tie">'+
-          '<div class="team me"><span class="flag">🇳🇱</span><span class="nm">Netherlands</span></div>'+
-          '<div class="sep">VS</div>'+
-          '<div class="team"><span class="flag">'+r.opp.f+'</span><span class="nm">'+r.opp.n+'</span></div>'+
+          '<span class="team me"><span class="flag">🇳🇱</span><span class="nm">Netherlands</span></span>'+
+          '<span class="sep">VS</span>'+
+          '<span class="team"><span class="flag">'+r.opp.f+'</span><span class="nm">'+r.opp.n+'</span></span>'+
         '</div>'+
-        '<div class="venue">📍 '+r.venue+'</div>'+
+        '<div class="meta"><b>🕒 '+r.cet+' CET</b> · 📍 '+r.city+'</div>'+
       '</div></div>';
   }).join("");
   document.getElementById("tbl").innerHTML=ROUNDS.map(function(r){
-    return '<tr><td><b>'+r.round+'</b></td><td>'+r.date+'</td><td>'+r.opp.f+' '+r.opp.n+'</td>'+
+    return '<tr><td><b>'+r.round+'</b></td><td>'+r.date+'<br><span style="color:var(--muted);font-size:12px">'+r.cet+' CET</span></td>'+
+      '<td>'+r.opp.f+' '+r.opp.n+'</td>'+
       '<td class="r"><b>'+r.reach+'</b></td><td><span class="conf c-'+r.conf+'">'+r.cl+'</span></td></tr>';
   }).join("");
 </script>
