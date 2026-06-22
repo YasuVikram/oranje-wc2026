@@ -6,79 +6,66 @@
 <title>Netherlands · Road to the Final — World Cup 2026</title>
 <style>
   :root{
-    --bg:#F4F6FB;
-    --card:#FFFFFF;
-    --ink:#14203F;
-    --muted:#737B96;
-    --line:#E5E8F2;
-    --orange:#FF6B00;
-    --orange-soft:#FFF1E6;
-    --orange-line:#FFB37A;
-    --green:#1FA971;
-    --shadow:0 1px 2px rgba(20,32,63,.05), 0 8px 24px rgba(20,32,63,.06);
+    --bg:#F4F6FB; --card:#FFFFFF; --ink:#14203F; --muted:#737B96;
+    --line:#E5E8F2; --orange:#FF6B00; --orange-soft:#FFF1E6; --orange-line:#FF9A52;
+    --green:#1FA971; --shadow:0 1px 2px rgba(20,32,63,.05),0 8px 22px rgba(20,32,63,.07);
+    --indent:60px; --gap:30px; --cardw:248px;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;
-  }
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
   .wrap{max-width:1040px;margin:0 auto;padding:30px 20px 64px}
 
   /* header */
   .head{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
   .badge{width:46px;height:46px;border-radius:12px;flex:none;background:var(--orange);display:grid;place-items:center;font-size:24px}
-  h1{font-size:clamp(22px,4vw,30px);margin:0;font-weight:800;letter-spacing:-.4px}
+  h1{font-size:clamp(21px,4vw,29px);margin:0;font-weight:800;letter-spacing:-.4px}
   .tag{color:var(--muted);font-size:13.5px;margin-top:1px}
   .asof{margin-left:auto;font-size:12px;color:var(--muted);text-align:right;line-height:1.35}
   .asof b{color:var(--ink)}
+  .hint{margin-top:14px;font-size:13px;color:var(--muted)} .hint b{color:var(--ink)}
 
-  .hint{margin-top:14px;font-size:13px;color:var(--muted)}
-  .hint b{color:var(--ink)}
+  /* ladder */
+  .ladder{margin:30px 0 4px;padding-left:4px}
+  .step{position:relative;width:var(--cardw)}
+  .step + .step{margin-top:var(--gap)}
+  .s1{margin-left:calc(1*var(--indent))}
+  .s2{margin-left:calc(2*var(--indent))}
+  .s3{margin-left:calc(3*var(--indent))}
+  .s4{margin-left:calc(4*var(--indent))}
 
-  /* bracket */
-  .bracket{
-    margin-top:26px;display:flex;gap:14px;align-items:stretch;
-    overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity;
-  }
-  .round{flex:1 0 188px;min-width:188px;display:flex;flex-direction:column;scroll-snap-align:start}
-  .rhead{margin-bottom:10px}
-  .rname{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--orange)}
-  .rdate{font-size:17px;font-weight:800;letter-spacing:-.3px;margin-top:2px}
-  .rsub{font-size:11.5px;color:var(--muted)}
+  /* connector elbow: previous card bottom -> down -> right -> this card top */
+  .step .elbow{position:absolute;top:calc(-1*var(--gap));left:calc(-1*var(--indent));
+    width:var(--indent);height:var(--gap);
+    border-left:2.5px solid var(--orange-line);border-bottom:2.5px solid var(--orange-line);
+    border-bottom-left-radius:12px}
 
-  .match{
-    background:var(--card);border:1px solid var(--line);border-radius:14px;
-    padding:13px;box-shadow:var(--shadow);position:relative;flex:1;
-    display:flex;flex-direction:column;justify-content:center;gap:10px;min-height:120px;
-  }
-  .row{display:flex;align-items:center;gap:9px}
-  .flag{font-size:21px;width:26px;text-align:center;flex:none}
-  .nm{font-size:14px;font-weight:600}
-  .row.ned .nm{font-weight:800;color:var(--orange)}
-  .vs{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;padding-left:35px}
-  .q{font-size:11px;color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:15px;
+    padding:13px 15px;box-shadow:var(--shadow)}
+  .step.last .card{border-color:var(--orange-line);background:linear-gradient(180deg,var(--orange-soft),#fff)}
 
-  .pill{
-    position:absolute;top:11px;right:11px;background:var(--orange-soft);color:var(--orange);
-    font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;
-  }
+  .ctop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .round{font-size:10.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--orange)}
+  .date{font-size:19px;font-weight:800;letter-spacing:-.4px;margin-top:1px}
+  .pill{background:var(--orange-soft);color:var(--orange);font-size:11px;font-weight:800;
+    padding:3px 9px;border-radius:999px;white-space:nowrap}
   .pill.win{background:#E9F8F1;color:var(--green)}
 
-  .feeder{font-size:11px;color:var(--muted);margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
-  .feeder b{color:var(--ink);font-weight:600}
-
-  .match.final{border-color:var(--orange-line);background:linear-gradient(180deg,var(--orange-soft),#fff)}
-  .trophy{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:24px;background:var(--bg);padding:0 6px}
-
-  .venue{font-size:11px;color:var(--muted);margin-top:8px;display:flex;gap:5px;align-items:flex-start}
+  .tie{margin-top:11px;display:flex;flex-direction:column;gap:6px}
+  .team{display:flex;align-items:center;gap:9px}
+  .flag{font-size:20px;width:24px;text-align:center;flex:none}
+  .nm{font-size:14.5px;font-weight:600}
+  .team.me .nm{font-weight:800;color:var(--orange)}
+  .sep{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:1px}
+  .sep::before,.sep::after{content:"";height:1px;background:var(--line);flex:1}
+  .venue{margin-top:11px;font-size:11.5px;color:var(--muted)}
+  .trophy{font-size:18px;margin-right:4px}
 
   /* details */
-  h2{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:36px 0 12px}
+  h2{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:38px 0 12px}
   .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);font-size:13.5px}
-  .panel p{margin:0 0 10px} .panel p:last-child{margin:0}
-  .panel b{color:var(--ink)}
-
+  .panel p{margin:0 0 10px} .panel p:last-child{margin:0} .panel b{color:var(--ink)}
   table{width:100%;border-collapse:collapse;font-size:13.5px}
   th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
   th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700}
@@ -87,16 +74,17 @@
   .conf{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
   .c-hi{background:#E9F8F1;color:var(--green)} .c-md{background:#FFF6E0;color:#B7860B}
   .c-lo{background:var(--orange-soft);color:var(--orange)} .c-vlo{background:#FDECEC;color:#D14343}
-
-  .alt{border-left:3px solid var(--orange);background:var(--orange-soft);border-radius:0 12px 12px 0;padding:13px 16px;font-size:13.5px}
-  .alt b{color:var(--ink)}
-
-  .src a{color:#1f57d6;text-decoration:none} .src a:hover{text-decoration:underline}
-  .src li{margin:5px 0}
+  .alt{border-left:3px solid var(--orange);background:var(--orange-soft);border-radius:0 12px 12px 0;padding:13px 16px;font-size:13.5px} .alt b{color:var(--ink)}
+  .src a{color:#1f57d6;text-decoration:none} .src a:hover{text-decoration:underline} .src li{margin:5px 0}
   footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
 
-  .scrollnote{font-size:11.5px;color:var(--muted);margin-top:8px;text-align:center}
-  @media(min-width:880px){.scrollnote{display:none}}
+  @media(max-width:560px){
+    :root{--indent:20px;--gap:26px;--cardw:auto}
+    .ladder{padding-right:4px}
+    .step{width:auto}
+    .s1{margin-left:calc(1*var(--indent))} .s2{margin-left:calc(2*var(--indent))}
+    .s3{margin-left:calc(3*var(--indent))} .s4{margin-left:calc(4*var(--indent))}
+  }
 </style>
 </head>
 <body>
@@ -106,92 +94,67 @@
     <div class="badge">🇳🇱</div>
     <div>
       <h1>Netherlands · Road to the Final</h1>
-      <div class="tag">FIFA World Cup 2026 — projected knockout schedule</div>
+      <div class="tag">FIFA World Cup 2026 — projected knockout path</div>
     </div>
     <div class="asof">as of<br><b>22 Jun 2026</b></div>
   </div>
-  <div class="hint">Dates &amp; venues are fixed. Opponents are the most likely team for each slot and firm up once the groups finish (24–26 Jun). <b>The %</b> is the Dutch chance of reaching that round.</div>
+  <div class="hint">Each win carries them down to the next match. <b>Dates &amp; venues are fixed</b>; opponents are the most likely team for each slot and firm up once the groups finish (24–26 Jun). <b>The %</b> is the Dutch chance of reaching that round.</div>
 
-  <!-- BRACKET -->
-  <div class="bracket" id="bracket"></div>
-  <div class="scrollnote">← swipe to see all rounds →</div>
+  <div class="ladder" id="ladder"></div>
 
   <!-- DETAILS -->
   <h2>The detail</h2>
   <div class="panel">
-    <p><b>The assumption.</b> This path assumes the Netherlands <b>win Group F</b> — currently top on goals scored, and Opta's most likely outcome (~48%). That keeps them on the kinder side of the draw. A 2nd-place finish changes everything (see below).</p>
-    <p><b>How sure are the opponents?</b> The bracket <i>slots</i> are fixed by FIFA, so the early opponents are quite certain; the names get fuzzier each round as more results are needed. Confidence is marked in the table.</p>
+    <p><b>The assumption.</b> This path assumes the Netherlands <b>win Group F</b> — currently top on goals scored, and Opta's most likely outcome (~48%). That keeps them on the kinder side of the draw; finishing 2nd changes everything (see below).</p>
+    <p><b>How sure are the opponents?</b> The bracket <i>slots</i> are fixed by FIFA, so early opponents are quite certain; the names get fuzzier each round as more results are needed. Confidence is marked in the table.</p>
     <p><b>The percentages</b> are the cumulative chance the Dutch reach each round. The endpoints — advancing the group (~88%, now near-certain) and winning the trophy (3.8%) — are published Opta supercomputer figures; the middle rounds are estimated from team strength to show the shape of the climb.</p>
   </div>
 
   <h2>Round-by-round</h2>
   <div class="panel" style="padding:6px 18px">
-    <table>
-      <thead><tr><th>Round</th><th>Date</th><th>Likely opponent</th><th class="r">Reach</th><th>Confidence</th></tr></thead>
-      <tbody id="tbl"></tbody>
-    </table>
+    <table><thead><tr><th>Round</th><th>Date</th><th>Likely opponent</th><th class="r">Reach</th><th>Confidence</th></tr></thead>
+      <tbody id="tbl"></tbody></table>
   </div>
 
   <h2>If they finish 2nd in Group F</h2>
-  <div class="alt">
-    A runner-up finish sends the Netherlands to <b>Houston on 29 Jun to face the Group C winner — most likely Brazil 🇧🇷</b> — and onto the half of the draw with England 🏴󠁧󠁢󠁥󠁮󠁧󠁿 and the other top seeds. Same dates, tougher opponents. That's why the <b>final group game vs Tunisia on 25 Jun</b> matters: top spot unlocks the route shown above.
-  </div>
+  <div class="alt">A runner-up finish sends the Netherlands to <b>Houston on 29 Jun to face the Group C winner — most likely Brazil 🇧🇷</b> — and onto the half of the draw with England 🏴󠁧󠁢󠁥󠁮󠁧󠁿 and the other top seeds. Same dates, tougher opponents. That's why the <b>final group game vs Tunisia on 25 Jun</b> matters: top spot unlocks the route above.</div>
 
   <h2>Sources</h2>
-  <div class="panel src">
-    <ul style="margin:0;padding-left:18px">
-      <li>Wikipedia — <a href="https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_knockout_stage" target="_blank" rel="noopener">2026 World Cup knockout stage</a> (bracket, dates, venues)</li>
-      <li>Wikipedia — <a href="https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_draw" target="_blank" rel="noopener">2026 World Cup draw</a> (group line-ups)</li>
-      <li>Opta Analyst — <a href="https://theanalyst.com/articles/who-will-win-2026-fifa-world-cup-predictions-opta-supercomputer" target="_blank" rel="noopener">supercomputer title odds</a> &amp; <a href="https://theanalyst.com/articles/world-cup-2026-group-f-predictions-preview" target="_blank" rel="noopener">Group F preview</a></li>
-      <li>Live tables — <a href="https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_Group_F" target="_blank" rel="noopener">Group F</a> · <a href="https://www.cbssports.com/soccer/news/world-cup-group-standings-table-results/" target="_blank" rel="noopener">CBS Sports</a></li>
-    </ul>
-  </div>
+  <div class="panel src"><ul style="margin:0;padding-left:18px">
+    <li>Wikipedia — <a href="https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_knockout_stage" target="_blank" rel="noopener">2026 World Cup knockout stage</a> (bracket, dates, venues)</li>
+    <li>Wikipedia — <a href="https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_draw" target="_blank" rel="noopener">2026 World Cup draw</a> (group line-ups)</li>
+    <li>Opta Analyst — <a href="https://theanalyst.com/articles/who-will-win-2026-fifa-world-cup-predictions-opta-supercomputer" target="_blank" rel="noopener">supercomputer title odds</a> &amp; <a href="https://theanalyst.com/articles/world-cup-2026-group-f-predictions-preview" target="_blank" rel="noopener">Group F preview</a></li>
+    <li>Live tables — <a href="https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_Group_F" target="_blank" rel="noopener">Group F</a> · <a href="https://www.cbssports.com/soccer/news/world-cup-group-standings-table-results/" target="_blank" rel="noopener">CBS Sports</a></li>
+  </ul></div>
 
   <footer>Built 22 Jun 2026 · auto-refreshes after the group stage with the confirmed Round-of-32 matchup.</footer>
 </div>
 
 <script>
-  var ROUNDS = [
-    { rname:"Round of 32", date:"Sun 29 Jun", sub:"Match 75", venue:"Estadio BBVA, Monterrey",
-      opp:{flag:"🇲🇦",name:"Morocco"}, reach:"78%", pillCls:"",
-      feeder:"Group C runner-up — Morocco or Brazil", conf:"hi", confLab:"High" },
-    { rname:"Round of 16", date:"Sat 4 Jul", sub:"Match 90", venue:"NRG Stadium, Houston",
-      opp:{flag:"🇨🇭",name:"Switzerland"}, reach:"48%", pillCls:"",
-      feeder:"Switzerland / Canada (Group B side)", conf:"md", confLab:"Medium" },
-    { rname:"Quarter-final", date:"Thu 9 Jul", sub:"Match 97", venue:"Gillette Stadium, Foxborough",
-      opp:{flag:"🇫🇷",name:"France"}, reach:"20%", pillCls:"",
-      feeder:"From 🇫🇷 France · 🇩🇪 Germany", conf:"md", confLab:"Medium" },
-    { rname:"Semi-final", date:"Tue 14 Jul", sub:"Match 101", venue:"AT&T Stadium, Arlington",
-      opp:{flag:"🇪🇸",name:"Spain"}, reach:"8.5%", pillCls:"",
-      feeder:"From 🇪🇸 Spain · 🇦🇷 Argentina", conf:"lo", confLab:"Low" },
-    { rname:"FINAL", date:"Sun 19 Jul", sub:"Match 104", venue:"MetLife Stadium, New Jersey",
-      opp:{flag:"❓",name:"Best of other half"}, reach:"3.8%", pillCls:"win",
-      feeder:"England · Portugal · or a top seed", conf:"vlo", confLab:"Very low", final:true }
+  var ROUNDS=[
+    {round:"Round of 32",date:"Sun 29 Jun",venue:"Estadio BBVA, Monterrey",opp:{f:"🇲🇦",n:"Morocco"},reach:"78%",pill:"",conf:"hi",cl:"High"},
+    {round:"Round of 16",date:"Sat 4 Jul",venue:"NRG Stadium, Houston",opp:{f:"🇨🇭",n:"Switzerland"},reach:"48%",pill:"",conf:"md",cl:"Medium"},
+    {round:"Quarter-final",date:"Thu 9 Jul",venue:"Gillette Stadium, Foxborough",opp:{f:"🇫🇷",n:"France"},reach:"20%",pill:"",conf:"md",cl:"Medium"},
+    {round:"Semi-final",date:"Tue 14 Jul",venue:"AT&T Stadium, Arlington",opp:{f:"🇪🇸",n:"Spain"},reach:"8.5%",pill:"",conf:"lo",cl:"Low"},
+    {round:"FINAL",date:"Sun 19 Jul",venue:"MetLife Stadium, New Jersey",opp:{f:"🏆",n:"Best of other half"},reach:"3.8%",pill:"win",conf:"vlo",cl:"Very low",last:true}
   ];
-
-  // bracket
-  document.getElementById("bracket").innerHTML = ROUNDS.map(function(r){
-    return '<div class="round"><div class="rhead">'+
-        '<div class="rname">'+r.rname+'</div>'+
-        '<div class="rdate">'+r.date+'</div>'+
-        '<div class="rsub">'+r.sub+'</div></div>'+
-      '<div class="match'+(r.final?' final':'')+'">'+
-        (r.final?'<div class="trophy">🏆</div>':'')+
-        '<div class="pill '+r.pillCls+'">'+r.reach+'</div>'+
-        '<div class="row ned"><span class="flag">🇳🇱</span><span class="nm">Netherlands</span></div>'+
-        '<div class="vs">vs</div>'+
-        '<div class="row"><span class="flag">'+r.opp.flag+'</span><span class="nm">'+r.opp.name+'</span></div>'+
-        '<div class="feeder"><b>'+r.feeder+'</b></div>'+
+  document.getElementById("ladder").innerHTML=ROUNDS.map(function(r,i){
+    return '<div class="step s'+i+(r.last?' last':'')+'">'+
+      (i>0?'<div class="elbow"></div>':'')+
+      '<div class="card">'+
+        '<div class="ctop"><div><div class="round">'+r.round+'</div><div class="date">'+r.date+'</div></div>'+
+          '<div class="pill '+r.pill+'">'+r.reach+'</div></div>'+
+        '<div class="tie">'+
+          '<div class="team me"><span class="flag">🇳🇱</span><span class="nm">Netherlands</span></div>'+
+          '<div class="sep">VS</div>'+
+          '<div class="team"><span class="flag">'+r.opp.f+'</span><span class="nm">'+r.opp.n+'</span></div>'+
+        '</div>'+
         '<div class="venue">📍 '+r.venue+'</div>'+
       '</div></div>';
   }).join("");
-
-  // table
-  document.getElementById("tbl").innerHTML = ROUNDS.map(function(r){
-    return '<tr><td><b>'+r.rname+'</b></td><td>'+r.date+'</td>'+
-      '<td>'+r.opp.flag+' '+r.opp.name+'</td>'+
-      '<td class="r"><b>'+r.reach+'</b></td>'+
-      '<td><span class="conf c-'+r.conf+'">'+r.confLab+'</span></td></tr>';
+  document.getElementById("tbl").innerHTML=ROUNDS.map(function(r){
+    return '<tr><td><b>'+r.round+'</b></td><td>'+r.date+'</td><td>'+r.opp.f+' '+r.opp.n+'</td>'+
+      '<td class="r"><b>'+r.reach+'</b></td><td><span class="conf c-'+r.conf+'">'+r.cl+'</span></td></tr>';
   }).join("");
 </script>
 </body>
