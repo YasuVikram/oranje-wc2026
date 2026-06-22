@@ -78,6 +78,25 @@
   .src a{color:#1f57d6;text-decoration:none} .src a:hover{text-decoration:underline} .src li{margin:5px 0}
   footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
 
+  /* chat assistant */
+  .chat{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+  .chat-h{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--accent-soft),#fff)}
+  .chat-h .av{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;font-size:16px;flex:none}
+  .chat-h b{font-size:14px} .chat-h span{font-size:11.5px;color:var(--muted)}
+  .chatlog{max-height:340px;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+  .msg{max-width:86%;font-size:13.5px;line-height:1.5;padding:9px 12px;border-radius:13px;white-space:pre-wrap}
+  .msg.bot{align-self:flex-start;background:#F0F2F8;color:var(--ink);border-bottom-left-radius:4px}
+  .msg.user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+  .msg b{font-weight:700}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 12px}
+  .chip{font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:999px;padding:6px 11px;cursor:pointer}
+  .chip:hover{background:var(--accent-line);color:#fff}
+  .chatform{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
+  .chatform input{flex:1;font:inherit;font-size:14px;border:1.5px solid var(--line);border-radius:11px;padding:10px 13px;color:var(--ink)}
+  .chatform input:focus{outline:none;border-color:var(--accent-line)}
+  .chatform button{font:inherit;font-weight:700;font-size:14px;color:#fff;background:var(--accent);border:none;border-radius:11px;padding:0 16px;cursor:pointer}
+  .chatform button:hover{background:var(--accent-deep,#E55300)}
+
   @media(max-width:560px){
     :root{--indent:20px;--gap:26px;--cardw:auto}
     .step{width:auto}
@@ -105,6 +124,17 @@
   <div class="hint">Pick a top-10 contender to see their projected knockout path. <b>Dates, venues &amp; CET kick-offs are fixed</b>; opponents are the most likely team for each slot. <b>The %</b> is the chance of reaching that round — the trophy shows the chance to win it all.</div>
 
   <div class="ladder" id="ladder"></div>
+
+  <h2>Ask the bracket bot</h2>
+  <div class="chat">
+    <div class="chat-h"><div class="av">💬</div><div><b>World Cup bot</b><br><span>answers from the data on this page · no AI, no internet</span></div></div>
+    <div class="chatlog" id="chatlog"></div>
+    <div class="chips" id="chips"></div>
+    <form class="chatform" id="chatform" autocomplete="off">
+      <input id="chatinput" placeholder="Ask about dates, opponents, odds, routes…" />
+      <button type="submit">Send</button>
+    </form>
+  </div>
 
   <h2>The detail</h2>
   <div class="panel">
@@ -242,6 +272,102 @@
 
   sel.addEventListener("change",function(){render(sel.value);});
   sel.value="netherlands"; render("netherlands");
+
+  // ---------------- Bracket bot (rules-based, no AI) ----------------
+  var ALIAS={netherlands:["netherland","dutch","holland","oranje","nederland"],spain:["spain","españa","espana","spanish"],
+    france:["france","french","les bleus"],england:["england","english","three lions"],argentina:["argentina","argentine","albiceleste"],
+    portugal:["portugal","portuguese"],brazil:["brazil","brasil","brazilian","selecao","seleção"],germany:["germany","german","deutschland"],
+    norway:["norway","norwegian","norge"],belgium:["belgium","belgian","red devils"]};
+  // rough strength index for opponents (title-odds where known, nominal otherwise)
+  var STR={"Spain":16.1,"France":13.0,"England":11.2,"Argentina":10.4,"Portugal":7.0,"Brazil":6.6,"Germany":5.1,
+    "Netherlands":3.6,"Norway":3.5,"Belgium":2.4,"Colombia":2.1,"Morocco":1.9,"Switzerland":1.6,"USA":1.5,"Uruguay":1.5,
+    "Japan":1.4,"Mexico":1.3,"Austria":1.0,"Egypt":0.8,"3rd-place team":0.7};
+  function strOf(n){return STR[n]!=null?STR[n]:1.0;}
+  function routeScore(key){return TEAMS[key].rounds.reduce(function(s,r){return s+strOf(r.on);},0);}
+
+  function findTeam(text){
+    for(var k in ALIAS){for(var i=0;i<ALIAS[k].length;i++){if(text.indexOf(ALIAS[k][i])>-1)return k;}}
+    return null;
+  }
+  function findRound(text){
+    if(/quarter|\bqf\b/.test(text))return 2;
+    if(/semi|\bsf\b/.test(text))return 3;
+    if(/round of 16|last 16|\br16\b|round 16/.test(text))return 1;
+    if(/round of 32|\br32\b|round 32|first (game|match|round)|opening|next (game|match)|when/.test(text))return 0;
+    if(/\bfinal\b/.test(text))return 4;
+    return -1;
+  }
+  function line(t,i){var r=t.rounds[i];return R[i]+" — <b>"+r.d+", "+r.t+" CET</b> — "+t.flag+" "+t.name+" vs "+r.of+" "+r.on+" ("+r.c+")";}
+
+  function answer(raw){
+    var text=raw.toLowerCase().trim();
+    var named=findTeam(text);
+    var t=TEAMS[named||sel.value];
+
+    if(/^(hi|hey|hello|yo|help|what can you)/.test(text)||text==="?")
+      return "I answer from this bracket — try:\n• \"When do "+t.name+" play next?\"\n• \"Who do they face in the quarter-final?\"\n• \"Show "+t.name+"'s full schedule\"\n• \"What are their chances?\"\n• \"Who has the easiest route?\"\n• \"Compare Spain and Brazil\"";
+
+    // compare
+    if(/compare|\bvs\b|versus| or /.test(text)){
+      var hits=[];for(var k in ALIAS){for(var i=0;i<ALIAS[k].length;i++){if(text.indexOf(ALIAS[k][i])>-1){if(hits.indexOf(k)<0)hits.push(k);break;}}}
+      if(hits.length>=2){
+        var a=TEAMS[hits[0]],b=TEAMS[hits[1]];
+        var ra=routeScore(hits[0]).toFixed(1),rb=routeScore(hits[1]).toFixed(1);
+        var easier=routeScore(hits[0])<routeScore(hits[1])?a.name:b.name;
+        return a.flag+" <b>"+a.name+"</b> — title odds "+a.odds+", route-difficulty "+ra+"\n"+
+               b.flag+" <b>"+b.name+"</b> — title odds "+b.odds+", route-difficulty "+rb+"\n\n"+
+               "Opta favours "+(parseFloat(a.odds)>=parseFloat(b.odds)?a.name:b.name)+" to win it; "+easier+" has the kinder projected draw. (Lower difficulty = easier.)";
+      }
+    }
+    // easiest / hardest route
+    if(/easiest|easy route|kind(est)? (draw|route)|hardest|toughest|tough(est)? (draw|route)|who has the/.test(text)){
+      var ranked=ORDER.slice().sort(function(x,y){return routeScore(x)-routeScore(y);});
+      var hard=/hard|tough/.test(text);
+      var list=(hard?ranked.slice().reverse():ranked).slice(0,5).map(function(k,i){
+        return (i+1)+". "+TEAMS[k].flag+" "+TEAMS[k].name+" — difficulty "+routeScore(k).toFixed(1);});
+      return (hard?"Hardest":"Easiest")+" projected routes (sum of opponent strength, lower = easier):\n"+list.join("\n")+
+        "\n\nRough index from opponent title-odds — opponents firm up after the group stage.";
+    }
+    // who will win overall
+    if(!named&&/(who).*(win|favourite|favorite|lift|champion)|most likely|best chance|win the (world cup|tournament|trophy)/.test(text)){
+      return "Opta's top favourites to win World Cup 2026:\n"+ORDER.slice(0,5).map(function(k,i){
+        return (i+1)+". "+TEAMS[k].flag+" "+TEAMS[k].name+" — "+TEAMS[k].odds;}).join("\n")+"\n\nAsk \"chance for [team]\" for any of the top 10.";
+    }
+    // specific round
+    var rd=findRound(text);
+    if(rd>-1&&!/full|schedule|all|whole|every|path|route|fixtures/.test(text)){
+      var pre=(rd===0&&/next|when/.test(text))?t.name+"'s next match:\n":"";
+      return pre+line(t,rd)+(rd<4?"":"")+(t.rounds[rd].cf==="vlo"?"\n(Opponent is a projection — low confidence this deep.)":"");
+    }
+    // chances / odds
+    if(/chance|odds|win|champion|trophy|title|how far|likely/.test(text)){
+      return t.flag+" <b>"+t.name+"</b> (Group "+t.grp+") — Opta gives them <b>"+t.odds+"</b> to win the tournament (#"+t.rank+" of 48).\nProjected reach: R16 "+t.rounds[1].reach+" · QF "+t.rounds[2].reach+" · SF "+t.rounds[3].reach+" · win it all "+t.odds+".";
+    }
+    // full schedule
+    if(/full|schedule|all|whole|every|path|route|fixtures|games|matches/.test(text)||named&&!/[?]/.test(text)&&text.split(" ").length<=2){
+      return t.flag+" <b>"+t.name+"</b> — projected road to the final (assumes they win Group "+t.grp+"):\n"+
+        t.rounds.map(function(r,i){return line(t,i);}).join("\n");
+    }
+    // opponents
+    if(/opponent|who.*(play|face|against|meet)|draw/.test(text)){
+      return t.flag+" <b>"+t.name+"</b>'s likely opponents:\n"+
+        t.rounds.map(function(r,i){return "• "+R[i]+": "+r.of+" "+r.on;}).join("\n");
+    }
+    // fallback
+    return "I can answer that from the bracket — try asking about a date, an opponent, a team's chances, or the easiest route. For "+t.name+": \"show full schedule\" or \"who do they face in the quarter-final?\"";
+  }
+
+  var logEl=document.getElementById("chatlog");
+  function push(who,html){var d=document.createElement("div");d.className="msg "+who;d.innerHTML=html;logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight;}
+  function ask(text){push("user",text.replace(/</g,"&lt;"));setTimeout(function(){push("bot",answer(text));},120);}
+
+  var CHIPS=["When do they play next?","Show full schedule","What are their chances?","Who has the easiest route?","Compare Spain and Brazil"];
+  document.getElementById("chips").innerHTML=CHIPS.map(function(c){return '<span class="chip">'+c+'</span>';}).join("");
+  document.querySelectorAll("#chips .chip").forEach(function(el){el.addEventListener("click",function(){ask(el.textContent);});});
+
+  var form=document.getElementById("chatform"),input=document.getElementById("chatinput");
+  form.addEventListener("submit",function(e){e.preventDefault();var v=input.value.trim();if(!v)return;ask(v);input.value="";});
+  push("bot","Hi! Ask me anything about the World Cup 2026 knockout bracket — dates, projected opponents, a team's chances, or who got the easiest route. I default to whichever team is selected above (now <b>"+TEAMS[sel.value].name+"</b>), or name any top-10 side.");
 </script>
 </body>
 </html>
